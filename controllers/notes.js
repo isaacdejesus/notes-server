@@ -1,10 +1,10 @@
 const notesRouter = require('express').Router()
 const Note = require('../models/note.js')
 //sends back json object containing all notes
-notesRouter.get('/', (request, response) => {
-    Note.find({}).then(notes => {
+notesRouter.get('/', async(request, response) => {
+    const notes = await Note.find({})
         response.json(notes)
-    })
+    
 })
 //sends back a note matching given :id
 notesRouter.get('/:id', (request, response, next) => {
@@ -26,18 +26,19 @@ notesRouter.delete('/:id', (request, response, next) => {
         .catch(error => next(error))
 })
 //Adds a new note to the notes array
-notesRouter.post('/', (request, response, next) => {
+notesRouter.post('/', async (request, response, next) => {
     const body = request.body 
     const note = new Note({
         content: body.content,
         important: body.important || false,
         date: new Date(),
         })
-    note.save()
-        .then(savedNote => {
-        response.json(savedNote)
-        })
-        .catch(error => next(error))
+    try{
+    const savedNote = await note.save()
+    response.status(201).json(savedNote)}
+    catch(exception) {
+        next(exception)
+    }
 })
 //modify content of  post
 notesRouter.put('/:id', (request, response, next) => {
