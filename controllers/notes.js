@@ -11,7 +11,7 @@ const getTokenFrom = request => {
 }
 //sends back json object containing all notes
 notesRouter.get('/', async(request, response) => {
-    const notes = await Note.find({}).populate('User', {username: 1, name: 1})
+    const notes = await Note.find({}).populate('user', {username: 1, name: 1})
         response.json(notes)
 })
 //sends back a note matching given :id
